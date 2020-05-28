@@ -64,7 +64,12 @@ Packet queuePop(Queue q)
     q->queueTotalTime-= dataToReturn->actual_time;
     q->size = q->size-1;
     free(headToRemove);
-    UpdateQueuePriority(q->head, dataToReturn);
+    Node temp = q->head;
+    while (temp)
+    {
+        temp->data->priority = (temp->data->priority-= 0.5*dataToReturn->actual_time) > 0? temp->data->priority-= 0.5*dataToReturn->actual_time : 0;
+        temp = temp->next;
+    }
     return dataToReturn;
 }
 
@@ -93,7 +98,12 @@ void queueRemove(Queue q, Packet toRemove)
             free(temp);
             q->queueTotalTime-= toRemove->actual_time;
             q->size = q->size - 1;
-            UpdateQueuePriority(q->head, toRemove);
+            Node temp = q->head;
+            while (temp)
+            {
+                temp->data->priority = (temp->data->priority-= 0.5*toRemove->actual_time) > 0? temp->data->priority-= 0.5*toRemove->actual_time : 0;
+                temp = temp->next;
+            }
             return;
         }
         temp = temp->next;

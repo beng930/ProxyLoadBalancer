@@ -25,13 +25,14 @@
 #define SIZE_OF_MESSAGE 2 // messages are expected to be type and length, one char each.
 
 /*
- *  Serv 1 & 2 = Video type = x2 Music
- *  Serv3 = Music type = x3 Video, x2 Picture
+ *  Serv 1 - 6 = Video type = x2 Music
+ *  Serv 7-10 = Music type = x3 Video, x2 Picture
  */
 typedef enum servers_t {Server1, Server2, Server3, Server4, Server5,
                         Server6, Server7, Server8, Server9, Server10, NUM_OF_SERVERS} Servers;
 
 Servers getEnumerator(int index);
+int getIndex(Servers server);
 
 /*
  * priority queues - one for each server, to make it take the decision of what is the next packet to send
