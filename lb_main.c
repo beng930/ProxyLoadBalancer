@@ -9,13 +9,14 @@ int main(void) {
     }
 
     char* serversIPs[10] = {SERV1_IP, SERV2_IP, SERV3_IP, SERV4_IP, SERV5_IP, SERV6_IP, SERV7_IP, SERV8_IP, SERV9_IP, SERV10_IP};
-
     pthread_t serverThread[10];
+
     for (int i=0; i<NUM_OF_SERVERS; i++)
     {
         struct ServerArgWrapper* serverArgWrapper = malloc(sizeof(*serverArgWrapper));
         serverArgWrapper->server = getEnumerator(i);
         serverArgWrapper->serverIP = serversIPs[i];
+
         if (pthread_create(&serverThread[i], NULL, ServerConnections, serverArgWrapper) != 0)
         {
             fprintf(stderr, "Client pthread failed");

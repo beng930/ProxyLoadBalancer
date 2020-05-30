@@ -9,8 +9,25 @@
  */
 struct handle_client_args {
     int socket;
+    char* address;
 };
 
+char* getIPForServer(Servers index)
+{
+    switch (index)
+    {
+        case Server1: return "192.168.0.101";
+        case Server2: return "192.168.0.102";
+        case Server3: return "192.168.0.103";
+        case Server4: return "192.168.0.104";
+        case Server5: return "192.168.0.105";
+        case Server6: return "192.168.0.106";
+        case Server7: return "192.168.0.107";
+        case Server8: return "192.168.0.108";
+        case Server9: return "192.168.0.109";
+        case Server10: return "192.168.0.110";
+    }
+}
 /*
  *
  */
@@ -65,6 +82,7 @@ void* ClientConnections(void *args) {
 
         struct handle_client_args* c_sock = malloc (sizeof(*c_sock));
         c_sock->socket = client_socket;
+        c_sock->address = inet_ntoa(ca.sin_addr);
 
         if (pthread_create(&worker_thread, NULL, client_handle, c_sock) != 0) {
             close(client_socket);
@@ -102,16 +120,29 @@ static void* client_handle(void *args) {
         pthread_mutex_unlock(&mutexes[i]);
     }
 
+    fprintf(stdout, "Received request %c%c from %s, sending to %s\n", new_request->type, new_request->length, c_sock->address, getIPForServer(best_fit_server));
+
     pthread_exit(NULL);
     return NULL;//just to have no annoying warnings
 }
 
 static Servers findBestServer(Packet request) {
-    Servers best_fit = Server1;
-    int min_cost = calculateCost(Server1,request->type,atoi(&request->length));
-    min_cost += queueGetTotalTime(servers_queue[best_fit]);
+    ///generate two different random numbers from 0-9
+    int rand1 = rand() % 10;
+    int rand2 = rand1;
+    while (rand2 == rand1)
+    {
+        rand2 = rand() % 10;
+    }
+
+    int min_cost = calculateCost(getEnumerator(rand1), request->type, atoi(&request->length));
+    min_cost += queueGetTotalTime(servers_queue[rand1]);
+
+    int temp_cost = calculateCost(getEnumerator(rand2), request->type, atoi(&request->length));
+    temp_cost += queueGetTotalTime(servers_queue[rand2]);
+
     //iterate all servers to find best fit, put the request in the queue
-    for(int i=1; i<NUM_OF_SERVERS; i++) {
+    /*for(int i=1; i<NUM_OF_SERVERS; i++) {
         int temp_cost = calculateCost(i,request->type,atoi(&request->length));
         temp_cost += queueGetTotalTime(servers_queue[i]);
         if(min_cost>temp_cost) {
@@ -119,12 +150,12 @@ static Servers findBestServer(Packet request) {
             best_fit = i;
             min_cost = temp_cost;
         }
-    }
-    return best_fit;
+    }*/
+    return (temp_cost < min_cost) ? getEnumerator(rand2): getEnumerator(rand1);
 }
 
 static int calculateCost(Servers server, char type, int init_cost) {
-    if(getIndex(server) <= 6)
+    if(getIndex(server) <= 5)
     {
         if(type == 'V' || type == 'P') return init_cost;
         if(type == 'M') return 2*init_cost;
