@@ -25,7 +25,7 @@ char* getIPForServer(Servers index)
         case Server7: return "192.168.0.107";
         case Server8: return "192.168.0.108";
         case Server9: return "192.168.0.109";
-        case Server10: return "192.168.0.110";
+        case Server10: return "192.168.0.100";
     }
 }
 /*

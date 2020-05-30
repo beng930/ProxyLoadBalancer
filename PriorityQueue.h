@@ -9,11 +9,11 @@
 typedef struct Queue_t* Queue;
 
 typedef struct Packet_t {
-	char type; // 'M' = music, 'V' = video, 'P' = picture
-	char length; // number 0-9, as the time it supposed to take to process this media normally.
-	int actual_time; // the time it will actually take to process this packet - depends on the server
-	int client_socket; // the socket, that we got this packet request from, in the first place
-	double priority; // The priority of this request. Starts with value = actual_time and is dynamic to prevent starvation
+	char type; // 'M' = music, 'V' = video, 'P' = picture.
+	char length; // Normal process time of packet.
+	int actual_time; // Actual process time of packet - according to server.
+	int client_socket; // The client socket the packet came from.
+	double priority; // The priority of this request.
 }* Packet;
 
 
@@ -21,7 +21,7 @@ Queue queueCreate();
 
 int queueGetSize(Queue q);
 
-// Returns the total time it will take to process the entire queue by the server.
+// Returns the total time it will take to process the entire queue.
 int queueGetTotalTime(Queue q);
 
 // Returns the first element in the queue.
@@ -33,16 +33,14 @@ Packet queuePop(Queue q);
 // Removes @param "to_remove" from the queue
 void queueRemove(Queue q, Packet to_remove);
 
-// Inserts new element to the queue, keeping the queue sorted (head is the shortest process).
+// Inserts @param "p" to the queue, keeping the queue sorted.
 void queuePush(Queue q, Packet p);
 
 // Returns true if there are no elements in the queue.
 bool queueIsEmpty(Queue q);
 
-// Frees all elements memory and the queue's memory.
 void queueDestroy(Queue q);
 
-// Prints all the elements in the queue.
 void printQueue(Queue q);
 
 

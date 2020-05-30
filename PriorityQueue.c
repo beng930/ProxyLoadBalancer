@@ -30,13 +30,11 @@ int queueGetSize(Queue q)
     return q->size;
 }
 
-// Returns the total time it will take to process the entire queue by the server.
 int queueGetTotalTime(Queue q)
 {
     return q->queueTotalTime;
 }
 
-// Returns the first element in the queue.
 Packet queueTop(Queue q)
 {
     if (queueIsEmpty(q))
@@ -46,7 +44,6 @@ Packet queueTop(Queue q)
     return q->head->data;
 }
 
-// Removes the first element in the queue.
 Packet queuePop(Queue q)
 {
     Packet dataToReturn = NULL;
@@ -73,7 +70,6 @@ Packet queuePop(Queue q)
     return dataToReturn;
 }
 
-// Removes @param "to_remove" from the queue
 void queueRemove(Queue q, Packet toRemove)
 {
     if (q->head->data == toRemove)
@@ -110,7 +106,6 @@ void queueRemove(Queue q, Packet toRemove)
     }
 }
 
-// Inserts new element to the queue, keeping the queue sorted (head is the shortest process).
 void queuePush(Queue q, Packet data)
 {
     Node inserted = malloc(sizeof(*inserted));
@@ -155,13 +150,11 @@ void queuePush(Queue q, Packet data)
     q->queueTotalTime+= data->actual_time;
 }
 
-// Returns true if there are no elements in the queue.
 bool queueIsEmpty(Queue q)
 {
     return q->size == 0;
 }
 
-// Frees all elements memory and the queue's memory.
 void queueDestroy(Queue q)
 {
     while (!queueIsEmpty(q))
@@ -171,7 +164,6 @@ void queueDestroy(Queue q)
     free(q);
 }
 
-// Prints all the elements in the queue.
 void printQueue(Queue q)
 {
     Node temp = q->head;

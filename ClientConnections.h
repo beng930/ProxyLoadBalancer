@@ -25,8 +25,8 @@
 #define SIZE_OF_MESSAGE 2 // messages are expected to be type and length, one char each.
 
 /*
- *  Serv 1 - 6 = Video type = x2 Music
- *  Serv 7-10 = Music type = x3 Video, x2 Picture
+ *  Server 1-6 = Video type = x2 Music
+ *  Server 7-10 = Music type = x3 Video, x2 Picture
  */
 typedef enum servers_t {Server1, Server2, Server3, Server4, Server5,
                         Server6, Server7, Server8, Server9, Server10, NUM_OF_SERVERS} Servers;
@@ -35,20 +35,18 @@ Servers getEnumerator(int index);
 int getIndex(Servers server);
 
 /*
- * priority queues - one for each server, to make it take the decision of what is the next packet to send
+ * Priority queues for servers
  */
 Queue serversQueue[NUM_OF_SERVERS];
 
 /*
- * all mutexes, one for each priority queue (meaning one for each server's queue)
+ * Mutexes for each server queue
  */
 pthread_mutex_t mutexes[NUM_OF_SERVERS];
 
 /*
- *	@param args - assumed to be NULL
- *	Runs a thread that acts as a front end of the Load Balancer. It handles all the connections with the
- *	outer world, i.e. receives all the requests' messages from clients, and send it to the back end servers
- *	according to a specific balancing policy.
+ *	@param args = NULL
+ *	Runs the client thread for handling requests according to power 2 implementation
  */
 void* ClientConnections(void *args);
 
