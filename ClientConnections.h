@@ -37,7 +37,7 @@ int getIndex(Servers server);
 /*
  * priority queues - one for each server, to make it take the decision of what is the next packet to send
  */
-Queue servers_queue[NUM_OF_SERVERS];
+Queue serversQueue[NUM_OF_SERVERS];
 
 /*
  * all mutexes, one for each priority queue (meaning one for each server's queue)

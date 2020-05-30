@@ -31,12 +31,12 @@ void* ServerConnections(void *args) {
 
     if (connect(sockfd, (struct sockaddr *)&servAddr, sizeof(servAddr)) < 0)
     {
-        fprintf(stderr, "ERROR connecting");
+        fprintf(stderr, "ERROR connecting to server %s", serverIP);
         pthread_exit(NULL);
     }
 
     /// Access  relevant server queue
-    Queue waitingRequests = servers_queue[server];
+    Queue waitingRequests = serversQueue[server];
 
     /// Do until connection is terminated
     while(1)

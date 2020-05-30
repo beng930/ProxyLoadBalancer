@@ -20,7 +20,7 @@ struct ServerArgWrapper {
 #define SERV7_IP "192.168.0.107"
 #define SERV8_IP "192.168.0.108"
 #define SERV9_IP "192.168.0.109"
-#define SERV10_IP "192.168.0.110"
+#define SERV10_IP "192.168.0.100"
 
 /*
  *	@param args - assumed to be struct client_to_servers_args

@@ -3,7 +3,7 @@
 int main(void) {
     for(int i=0; i<NUM_OF_SERVERS; i++){
         // priority queue of requests for each server
-        servers_queue[i] = queueCreate();
+        serversQueue[i] = queueCreate();
         // locks to handle reading and writing to the priority queues
         pthread_mutex_init(&mutexes[i], NULL);
     }
@@ -19,7 +19,7 @@ int main(void) {
 
         if (pthread_create(&serverThread[i], NULL, ServerConnections, serverArgWrapper) != 0)
         {
-            fprintf(stderr, "Client pthread failed");
+            fprintf(stderr, "ERROR - couldn't open server thread");
             return -1;
         }
     }
@@ -27,19 +27,19 @@ int main(void) {
     pthread_t clientThread;
     if (pthread_create(&clientThread, NULL, ClientConnections, NULL) != 0)
     {
-        fprintf(stderr, "Server pthread failed");
+        fprintf(stderr, "ERROR - couldn't open client thread");
         return -1;
     }
 
-    pthread_join(clientThread,NULL);
     for (int i=0; i<NUM_OF_SERVERS; i++)
     {
         pthread_join(serverThread[i], NULL);
     }
+    pthread_join(clientThread,NULL);
 
     // destroy all mutexes and queues
     for(int i=0; i<NUM_OF_SERVERS; i++){
-        queueDestroy(servers_queue[i]);
+        queueDestroy(serversQueue[i]);
         pthread_mutex_destroy(&mutexes[i]);
     }
 

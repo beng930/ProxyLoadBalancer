@@ -115,7 +115,7 @@ static void* client_handle(void *args) {
     Servers best_fit_server = findBestServer(new_request);
     new_request->actual_time = calculateCost(best_fit_server,new_request->type,atoi(&new_request->length));
     new_request->priority = new_request->actual_time;
-    queuePush(servers_queue[best_fit_server],new_request);
+    queuePush(serversQueue[best_fit_server],new_request);
     for(int i=NUM_OF_SERVERS-1; i>=0; i--){
         pthread_mutex_unlock(&mutexes[i]);
     }
@@ -136,21 +136,11 @@ static Servers findBestServer(Packet request) {
     }
 
     int min_cost = calculateCost(getEnumerator(rand1), request->type, atoi(&request->length));
-    min_cost += queueGetTotalTime(servers_queue[rand1]);
+    min_cost += queueGetTotalTime(serversQueue[rand1]);
 
     int temp_cost = calculateCost(getEnumerator(rand2), request->type, atoi(&request->length));
-    temp_cost += queueGetTotalTime(servers_queue[rand2]);
+    temp_cost += queueGetTotalTime(serversQueue[rand2]);
 
-    //iterate all servers to find best fit, put the request in the queue
-    /*for(int i=1; i<NUM_OF_SERVERS; i++) {
-        int temp_cost = calculateCost(i,request->type,atoi(&request->length));
-        temp_cost += queueGetTotalTime(servers_queue[i]);
-        if(min_cost>temp_cost) {
-            //this queue is more fit for this job
-            best_fit = i;
-            min_cost = temp_cost;
-        }
-    }*/
     return (temp_cost < min_cost) ? getEnumerator(rand2): getEnumerator(rand1);
 }
 
