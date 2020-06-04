@@ -28,19 +28,12 @@ char* getIPForServer(Servers index)
         case Server10: return "192.168.0.100";
     }
 }
-/*
- *
- */
+
+
 static void* client_handle(void *args);
 
-/*
- *
- */
 static Servers findBestServer(Packet request);
 
-/*
- *
- */
 static int calculateCost(Servers server,char type,int init_cost);
 
 void* ClientConnections(void *args) {
@@ -88,6 +81,7 @@ void* ClientConnections(void *args) {
             close(client_socket);
             close(server_socket);
             fprintf(stderr, "ERROR on pthread");
+            free(c_sock);
             pthread_exit(NULL);
         }
     }
@@ -126,13 +120,18 @@ static void* client_handle(void *args) {
     return NULL;//just to have no annoying warnings
 }
 
+static int RandGenerator()
+{
+    double randomZeroToOne = rand() / (1.0 + RAND_MAX);
+    return (int)(randomZeroToOne * 10);
+}
 static Servers findBestServer(Packet request) {
     ///generate two different random numbers from 0-9
-    int rand1 = rand() % 10;
+    int rand1 = RandGenerator();
     int rand2 = rand1;
     while (rand2 == rand1)
     {
-        rand2 = rand() % 10;
+        rand2 = RandGenerator();
     }
 
     int min_cost = calculateCost(getEnumerator(rand1), request->type, atoi(&request->length));

@@ -59,27 +59,27 @@ void* ServerConnections(void *args) {
     return NULL;//just to have no annoying warnings
 }
 
-static void sendAndReceive(Packet request, int sockfd) {
-    char send_data[SIZE_OF_MESSAGE];
-    send_data[0] = request->type;
-    send_data[1] = request->length;
+static void sendAndReceive(Packet request, int sockFd) {
+    char DataToSend[SIZE_OF_MESSAGE];
+    DataToSend[0] = request->type;
+    DataToSend[1] = request->length;
     int clientSock = request->client_socket;
 
     /// Send waiting request from LB to server chosen
-    int sent_bytes = 0;
+    int sentBytes = 0;
     do {
-        sent_bytes += send(sockfd, send_data+sent_bytes, SIZE_OF_MESSAGE-sent_bytes, 0);
-    } while(sent_bytes<SIZE_OF_MESSAGE);
+        sentBytes += send(sockFd, DataToSend+sentBytes, SIZE_OF_MESSAGE-sentBytes, 0);
+    } while(sentBytes<SIZE_OF_MESSAGE);
 
-    /// Receive answer from server to LB
+    /// Receive answer from server to LB - blocking call
     char response[SIZE_OF_MESSAGE];
-    int received_len = recv(sockfd, response, SIZE_OF_MESSAGE*sizeof(char), MSG_WAITALL);
+    int MessageReceivedLength = recv(sockFd, response, SIZE_OF_MESSAGE*sizeof(char), MSG_WAITALL);
 
     /// Send answer back to client
-    sent_bytes = 0;
+    sentBytes = 0;
     do {
-        sent_bytes += send(clientSock, response+sent_bytes, received_len-sent_bytes, 0);
-    } while(sent_bytes<received_len);
+        sentBytes += send(clientSock, response+sentBytes, MessageReceivedLength-sentBytes, 0);
+    } while (sentBytes < MessageReceivedLength);
 
     close(clientSock);
 }

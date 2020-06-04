@@ -20,6 +20,7 @@ int main(void) {
         if (pthread_create(&serverThread[i], NULL, ServerConnections, serverArgWrapper) != 0)
         {
             fprintf(stderr, "ERROR - couldn't open server thread");
+            free(serverArgWrapper);
             return -1;
         }
     }
