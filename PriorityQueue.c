@@ -94,6 +94,7 @@ void queueRemove(Queue q, Packet toRemove)
             free(temp);
             q->queueTotalTime-= toRemove->actual_time;
             q->size = q->size - 1;
+            // Compilation warning calling UpdateQueuePriority - putting code here
             Node temp = q->head;
             while (temp)
             {

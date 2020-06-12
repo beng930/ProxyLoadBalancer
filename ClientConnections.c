@@ -37,7 +37,8 @@ static Servers findBestServer(Packet request);
 static int calculateCost(Servers server,char type,int init_cost);
 
 void* ClientConnections(void *args) {
-    struct sockaddr_in sa, ca;
+    struct sockaddr_in serv_ad, cli_ad;
+    int portno;
     int server_socket, client_socket;
     pthread_t worker_thread;
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,11 +46,11 @@ void* ClientConnections(void *args) {
         fprintf(stderr, "Socket creation error \n");
         pthread_exit(NULL);
     }
-
-    sa.sin_port = htons(atoi(PORT));
-    sa.sin_family = AF_INET;
-    inet_pton(AF_INET, LB_SERVER_IP, &(sa.sin_addr));
-    if (bind(server_socket, (struct sockaddr *)&sa,sizeof(sa)) < 0){
+    portno = atoi(PORT)
+    serv_ad.sin_port = htons(portno);
+    serv_ad.sin_family = AF_INET;
+    inet_pton(AF_INET, LB_SERVER_IP, &(serv_ad.sin_addr));
+    if (bind(server_socket, (struct sockaddr *)&serv_ad,sizeof(serv_ad)) < 0){
         close(server_socket);
         perror("Error: ");
         fprintf(stderr, "ERROR on binding\n");
@@ -62,11 +63,11 @@ void* ClientConnections(void *args) {
         pthread_exit(NULL);
     }
 
-    int cl = sizeof(ca);
+    int cl = sizeof(cli_ad);
 
     while(1){
         //server main loop
-        client_socket = accept(server_socket, (struct sockaddr*) &ca, &cl);
+        client_socket = accept(server_socket, (struct sockaddr*) &cli_ad, &cl);
         if (client_socket < 0){
             close(server_socket);
             fprintf(stderr, "ERROR on accept");
@@ -75,7 +76,7 @@ void* ClientConnections(void *args) {
 
         struct handle_client_args* c_sock = malloc (sizeof(*c_sock));
         c_sock->socket = client_socket;
-        c_sock->address = inet_ntoa(ca.sin_addr);
+        c_sock->address = inet_ntoa(cli_ad.sin_addr);
 
         if (pthread_create(&worker_thread, NULL, client_handle, c_sock) != 0) {
             close(client_socket);
