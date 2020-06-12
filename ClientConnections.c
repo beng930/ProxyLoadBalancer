@@ -91,31 +91,31 @@ void* ClientConnections(void *args) {
 }
 
 static void* client_handle(void *args) {
-    struct handle_client_args* c_sock = (struct handle_client_args*) args;
+    struct client_arguments* c_sock = (struct client_arguments*) args;
     int client_socket = c_sock->socket;
     free(c_sock);
 
     pthread_detach(pthread_self());
 
-    char input[SIZE_OF_MESSAGE];
+    char received[SIZE_OF_MESSAGE];
     recv(client_socket,input,SIZE_OF_MESSAGE*sizeof(char),MSG_WAITALL);
-    Packet new_request = malloc(sizeof(*new_request));
-    new_request->client_socket = client_socket;
-    new_request->type = input[0];
-    new_request->length = input[1];
+    Packet req = malloc(sizeof(*req));
+    req->type = received[0]
+    req->client_socket = client_socket;
+    req->length = reveived[1];
 
     for(int i=0; i<NUM_OF_SERVERS; i++){
         pthread_mutex_lock(&mutexes[i]);
     }
-    Servers best_fit_server = findBestServer(new_request);
-    new_request->actual_time = calculateCost(best_fit_server,new_request->type,atoi(&new_request->length));
-    new_request->priority = new_request->actual_time;
-    queuePush(serversQueue[best_fit_server],new_request);
+    Servers best_server = findBestServer(req);
+    req->actual_time = calculateCost(best_server,req->type,atoi(&req->length));
+    req->priority = req->actual_time;
+    queuePush(serversQueue[best_server],req);
     for(int i=NUM_OF_SERVERS-1; i>=0; i--){
         pthread_mutex_unlock(&mutexes[i]);
     }
 
-    fprintf(stdout, "Received request %c%c from %s, sending to %s\n", new_request->type, new_request->length, c_sock->address, getIPForServer(best_fit_server));
+    fprintf(stdout, "Received request %c%c from %s, sending to %s\n", req->type, req->length, c_sock->address, getIPForServer(best_server));
 
     pthread_exit(NULL);
     return NULL;//just to have no annoying warnings
